@@ -1,0 +1,54 @@
+//lógica de negocio de los productos: crear, listar y buscar
+//Los repositories solo guardan datos; las reglas y validaciones van acá.
+package service;
+
+import java.util.List;
+import model.Categoria;
+import model.Producto;
+import model.Proveedor;
+import observer.AlertaObserver;
+import repository.ProductoRepository;
+
+public class ProductoService {
+
+    private final ProductoRepository repositorio;
+    // un solo observer de alertas, compartido por todos los productos
+    private final AlertaObserver alertas = new AlertaObserver();
+
+    public ProductoService(ProductoRepository repositorio) {
+        this.repositorio = repositorio;
+    }
+
+    public Producto registrarProducto(String nombre, double precio,
+            String nombreCategoria, String nombreProveedor,
+            int cantidadInicial, int stockMinimo) {
+
+        if (repositorio.buscarPorNombre(nombre == null ? "" : nombre) != null) {
+            throw new IllegalArgumentException("Ya existe un producto con ese nombre.");
+        }
+
+        // por ahora categoría y proveedor se crean con id 0;
+        // más adelante tendrán su propio repository
+        Categoria categoria = new Categoria(0, nombreCategoria);
+        Proveedor proveedor = new Proveedor(0, nombreProveedor, null);
+
+        Producto producto = new Producto(0, nombre, precio,
+                categoria, proveedor, cantidadInicial, stockMinimo);
+
+        producto.getStock().agregarObserver(alertas);
+        repositorio.registrar(producto);
+        return producto;
+    }
+
+    public List<Producto> listarProductos() {
+        return repositorio.listarTodos();
+    }
+
+    public Producto obtenerPorNombre(String nombre) {
+        Producto producto = repositorio.buscarPorNombre(nombre == null ? "" : nombre);
+        if (producto == null) {
+            throw new IllegalArgumentException("No existe un producto con ese nombre.");
+        }
+        return producto;
+    }
+}
