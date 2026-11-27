@@ -8,7 +8,7 @@ public class ConexionBD {
 
     private static final String URL = "jdbc:mysql://localhost:3306/stockiate?useSSL=false&serverTimezone=UTC";
     private static final String USUARIO = "maryyc";
-    private static final String PASSWORD = "95101093Mary";
+    private static final String PASSWORD = "";
 
     public static Connection conectar() {
         try {
