@@ -11,7 +11,7 @@ public class ConexionBD {
 
     private static final String USUARIO = "maryyc";
 
-    private static final String CONTRASENA = "95101093Mary";
+    private static final String CONTRASENA = "";
 
     public static Connection conectar() throws SQLException {
         return DriverManager.getConnection(URL, USUARIO, CONTRASENA);
