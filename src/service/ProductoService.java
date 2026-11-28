@@ -1,5 +1,3 @@
-//lógica de negocio de los productos: crear, listar y buscar
-//Los repositories solo guardan datos; las reglas y validaciones van acá.
 package service;
 
 import java.util.List;
@@ -20,15 +18,13 @@ public class ProductoService {
     }
 
     public Producto registrarProducto(String nombre, double precio,
-            String nombreCategoria, String nombreProveedor,
-            int cantidadInicial, int stockMinimo) {
+                                      String nombreCategoria, String nombreProveedor,
+                                      int cantidadInicial, int stockMinimo) {
 
         if (repositorio.buscarPorNombre(nombre == null ? "" : nombre) != null) {
             throw new IllegalArgumentException("Ya existe un producto con ese nombre.");
         }
 
-        // por ahora categoría y proveedor se crean con id 0;
-        // más adelante tendrán su propio repository
         Categoria categoria = new Categoria(0, nombreCategoria);
         Proveedor proveedor = new Proveedor(0, nombreProveedor, null);
 
@@ -50,5 +46,13 @@ public class ProductoService {
             throw new IllegalArgumentException("No existe un producto con ese nombre.");
         }
         return producto;
+    }
+
+    // Actualiza el stock del producto en la base de datos.
+    public void actualizarStock(Producto producto) {
+        repositorio.actualizarStock(
+                producto.getId(),
+                producto.getCantidad()
+        );
     }
 }

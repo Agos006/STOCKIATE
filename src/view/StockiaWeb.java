@@ -73,10 +73,12 @@ public class StockiaWeb {
         StockService stockService =
                 new StockService(productoService, new MovimientoRepository());
 
-        // productos de ejemplo para la demo
-        productoService.registrarProducto("Coca Cola", 2500, "Bebidas", "Distribuidora Sur", 24, 6);
-        productoService.registrarProducto("Alfajor Rasta", 1000, "Golosinas", "Distribuidora Dulce", 30, 10);
-        productoService.registrarProducto("Galletas de agua Providencia", 1800, "Galletitas", "Distribuidora Sur", 15, 5);
+        // Registrar productos de ejemplo solo si la base de datos está vacía
+        if (productoService.listarProductos().isEmpty()) {
+            productoService.registrarProducto("Coca Cola", 2500, "Bebidas", "Distribuidora Sur", 24, 6);
+            productoService.registrarProducto("Alfajor Rasta", 1000, "Golosinas", "Distribuidora Dulce", 30, 10);
+            productoService.registrarProducto("Galletas de agua Providencia", 1800, "Galletitas", "Distribuidora Sur", 15, 5);
+        }
 
         return new ProductoController(productoService, stockService);
     }
@@ -123,7 +125,7 @@ public class StockiaWeb {
                 }
                 h.append("<tr><td>").append(esc(p.getNombre())).append("</td><td>")
                  .append(esc(String.valueOf(p.getCategoria()))).append("</td><td>")
-                 .append(esc(String.valueOf(p.getProveedor()))).append("</td><td>")
+                        .append(esc(p.getProveedor() == null ? "Sin proveedor" : p.getProveedor().toString())).append("</td><td>")
                  .append(String.format("$%.2f", p.getPrecio())).append("</td><td>")
                  .append(p.getCantidad()).append("</td><td>")
                  .append(p.getStock().getStockMinimo()).append("</td><td><span class=\"estado ")

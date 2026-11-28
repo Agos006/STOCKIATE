@@ -1,6 +1,3 @@
-//lógica de negocio del stock: entradas, salidas e historial de movimientos
-//Cuando el stock cambia, Stock (el Subject) avisa solo a sus observers;
-//este servicio no genera alertas.
 package service;
 
 import java.util.List;
@@ -33,20 +30,24 @@ public class StockService {
     }
 
     private Movimiento registrarMovimiento(String nombreProducto,
-            TipoMovimiento tipo, int cantidad) {
+                                           TipoMovimiento tipo, int cantidad) {
 
         Producto producto = productoService.obtenerPorNombre(nombreProducto);
 
-        // primero se cambia el stock; si falla (por ejemplo, stock insuficiente),
-        // no se guarda el movimiento
+        // Actualizar el stock según el tipo de movimiento.
         if (tipo == TipoMovimiento.ENTRADA) {
             producto.getStock().registrarEntrada(cantidad);
         } else {
             producto.getStock().registrarSalida(cantidad);
         }
 
+        // Guardar la nueva cantidad en MySQL.
+        productoService.actualizarStock(producto);
+
+        // Crear y guardar el movimiento en el historial.
         Movimiento movimiento = new Movimiento(0, producto, tipo, cantidad);
         historial.registrar(movimiento);
+
         return movimiento;
     }
 }
